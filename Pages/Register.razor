@@ -1,0 +1,78 @@
+﻿@page "/register"
+@using CoffeePOS.Models;
+@using CoffeePOS.Services;
+
+@inject NavigationManager NavManager
+
+<div class="vh-100 d-flex justify-content-center align-items-center">
+	<div class="container">
+		<div class="row d-flex justify-content-center">
+			<div class="col-12 col-md-8 col-lg-6">
+				<div class="border border-3 border-secondary rounded-2">
+					<div class="card bg-white shadow-lg">
+						<div class="card-body p-5">
+							<form class="mb-1 mt-md-4" @onsubmit="RegisterHandler">
+								<h2 class="fw-bold mb-2">Register</h2>
+								<p class=" mb-4">Sign up to our system, join us.</p>
+								<div class="mb-3">
+									<label for="text" class="form-label">Username</label>
+									<input type="text" class="form-control" @bind="_username" placeholder="Enter your username">
+								</div>
+								<div class="mb-3">
+									<label for="text" class="form-label">Email</label>
+									<input type="text" class="form-control" @bind="_email" placeholder="Enter your email address">
+								</div>
+								<div class="mb-4">
+									<label for="password" class="form-label">Password</label>
+									<input type="password" class="form-control" @bind="_password" placeholder="*******">
+								</div>
+								<div class="d-grid">
+									<button class="btn btn-outline-dark" type="submit">Register</button>
+								</div>
+							</form>
+						</div>
+						<div class="card-footer p-2 text-center">
+							<p class="mb-0"> Already have an account? <a href="/login" class="text-black-50 fw-bold" style="text-decoration: none">Sign In</a></p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@code {
+
+	[CascadingParameter]
+	private GlobalState _globalState { get; set; }
+
+	private bool _showDefaultCredentials { get; set; }
+
+	private string _username { get; set; }
+
+	private string _email { get; set; }
+
+	private string _password { get; set; }
+
+	private string _errorMessage = "";
+
+	private void RegisterHandler()
+	{
+		try
+		{
+			_errorMessage = "";
+
+			var user = UserService.Create(Guid.Empty, _username, _email, _password, Role.Staff);
+
+			if (user != null)
+			{
+				NavManager.NavigateTo("/login");
+			}
+		}
+		catch (Exception e)
+		{
+			_errorMessage = e.Message;
+			Console.WriteLine(e);
+		}
+	}
+}
